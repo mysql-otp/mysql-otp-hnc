@@ -106,14 +106,14 @@ Using *erlang.mk*, put this in your `Makefile`:
 
 ```Erlang
 DEPS = mysql_hnc
-dep_mysql_hnc = git https://github.com/Maria-12648430/mysql-otp-hnc 0.1.0
+dep_mysql_hnc = git https://github.com/mysql-otp/mysql-otp-hnc 0.1.0
 ```
 
 Using *rebar*, put this in your `rebar.config`:
 
 ```Erlang
 {deps, [
-    {mysql_hnc, ".*", {git, "https://github.com/Maria-12648430/mysql-otp-hnc",
+    {mysql_hnc, ".*", {git, "https://github.com/mysql-otp/mysql-otp-hnc",
                            {tag, "0.1.0"}}}
 ]}.
 ```
