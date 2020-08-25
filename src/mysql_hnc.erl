@@ -32,11 +32,12 @@
              PoolOptions :: hnc:opts(),
              MysqlOptions :: [mysql:option()].
 add_pool(Pool, PoolOptions, MysqlOptions) ->
-    %% We want strategy fifo as default instead of lifo.
+    %% We want strategy lifo as default instead of fifo.
     PoolOptions1 = case maps:is_key(strategy, PoolOptions) of
         true -> PoolOptions;
         false -> PoolOptions#{strategy => lifo}
     end,
+    %% We want connect_mode lazy as default instead of synchronous.
     MysqlOptions1 = case lists:keymember(connect_mode, 1, MysqlOptions) of
         true -> MysqlOptions;
         false -> [{connect_mode, lazy}|MysqlOptions]
