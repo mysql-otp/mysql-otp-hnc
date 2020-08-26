@@ -19,7 +19,8 @@
 -module(mysql_hnc).
 
 -export([add_pool/3, remove_pool/1,
-         checkin/2, checkout/1,
+         checkin/1, checkout/1,
+         get_connection/1,
          child_spec/3,
          execute/3, execute/4,
          query/2, query/3, query/4,
@@ -54,19 +55,28 @@ remove_pool(Pool) ->
         Error -> Error
     end.
 
-%% @doc Returns a mysql connection to the given pool.
--spec checkin(Pool, Conn) -> ok
-        when Pool :: hnc:pool(),
-             Conn :: mysql:connection().
-checkin(Pool, Conn) ->
-    hnc:checkin(Pool, Conn).
+%% @doc Returns the mysql connection identified by the given `ConnRef'
+%% (as returned by `mysql_hnc:checkout/1') to the pool.
+-spec checkin(ConnRef) -> ok
+        when ConnRef :: hnc:worker_ref().
+checkin(ConnRef) ->
+    hnc:checkin(ConnRef).
 
-%% @doc Checks out a mysql connection from a given pool.
--spec checkout(Pool) -> Conn
+%% @doc Checks out a mysql connection from the given pool.
+%%
+%% Note that this function does not return a mysql connection
+%% but a connection identifier. To get the actual connection,
+%% you must use `mysql_hnc:get_connection(ConnRef)' to unpack it.
+-spec checkout(Pool) -> ConnRef
         when Pool :: hnc:pool(),
-             Conn :: mysql:connection().
+             ConnRef :: hnc:worker_ref().
 checkout(Pool) ->
     hnc:checkout(Pool).
+
+%% @doc Get the connection from a connection identifier.
+-spec get_connection(hnc:worker_ref()) -> mysql:connection().
+get_connection(ConnRef) ->
+    hnc:get_worker(ConnRef).
 
 %% @doc Creates a supvervisor:child_spec. When the need to
 %% supervise the pools in another way.
@@ -158,11 +168,12 @@ query(Pool, Query, ParamsOrFiltermap, FiltermapOrTimeout) ->
 
 %% @doc Wrapper to hnc:transaction/2. Since it is not a mysql transaction.
 %% Example instead of:
-%% Conn = mysql_hnc:checkout(mypool),
+%% ConnRef = mysql_hnc:checkout(mypool),
+%% Conn = mysql_hnc:get_connection(ConnRef),
 %% try
 %%     mysql:query(Conn, "SELECT...")
 %%  after
-%%     mysql_hnc:checkin(mypool, Conn)
+%%     mysql_hnc:checkin(ConnRef)
 %%  end.
 %%
 %% mysql_hnc:with(mypool, fun (Conn) -> mysql:query(Conn, "SELECT...") end).

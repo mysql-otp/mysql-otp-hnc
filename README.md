@@ -86,7 +86,7 @@ first parameter.
 
 Sometimes you need to checkout a connection to execute multiple queries on it,
 without wrapping it in an SQL transaction. For this purpose you can use either
-a pair of calls to `checkout/1` and `checkin/2` or a call to `with/2` with a
+a pair of calls to `checkout/1` and `checkin/1` or a call to `with/2` with a
 fun as in this example:
 
 ```Erlang
@@ -99,6 +99,16 @@ fun as in this example:
 ok
 ```
 
+Using `checkout/1` and `checkin/1`
+----------------------------------
+
+The function `checkout/1` does not return a MySQL connection directly but a
+connection _identifier_ (actually, a `hnc` worker identifier). You have to
+unpack the real connection with a call to `get_connection/1` first.
+
+Accordingly, the function `checkin/1` does not expect a MySQL connection but
+the connection _identifier_ from which it was unpacked.
+
 Use this as a dependency
 ------------------------
 
@@ -106,7 +116,7 @@ Using *erlang.mk*, put this in your `Makefile`:
 
 ```Erlang
 DEPS = mysql_hnc
-dep_mysql_hnc = git https://github.com/mysql-otp/mysql-otp-hnc 0.1.0
+dep_mysql_hnc = git https://github.com/mysql-otp/mysql-otp-hnc 0.2.0
 ```
 
 Using *rebar*, put this in your `rebar.config`:
@@ -114,7 +124,7 @@ Using *rebar*, put this in your `rebar.config`:
 ```Erlang
 {deps, [
     {mysql_hnc, ".*", {git, "https://github.com/mysql-otp/mysql-otp-hnc",
-                           {tag, "0.1.0"}}}
+                           {tag, "0.2.0"}}}
 ]}.
 ```
 
