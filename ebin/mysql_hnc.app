@@ -17,7 +17,7 @@
 %% along with this program. If not, see <https://www.gnu.org/licenses/>.
 {application, mysql_hnc, [
     {description, "MySQL/OTP + hnc"},
-    {vsn, "0.1.0"},
+    {vsn, "0.2.0"},
     {modules, ['mysql_hnc','mysql_hnc_app','mysql_hnc_sup']},
     {mod, {mysql_hnc_app, []}},
     {applications, [kernel, stdlib, mysql, hnc]}
