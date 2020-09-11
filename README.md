@@ -109,6 +109,41 @@ unpack the real connection with a call to `get_connection/1` first.
 Accordingly, the function `checkin/1` does not expect a MySQL connection but
 the connection _identifier_ from which it was unpacked.
 
+A note on using session data
+----------------------------
+
+Connections to a MySQL server will be established and kept open in the pool.
+Using the `mysql_hnc` functions like `query`, `execute`, `transaction` etc
+will use a random connection from the pool to execute a query, ie it is unlikely
+that a `mysql_hnc:query` or similar call will be executed using the same connection
+as the ones before.
+
+If you are using session data like user variables, temporary tables etc, ie things
+that are bound to the connection that creates them and gets destroyed when it
+is closed, this means two things:
+
+* Any session data you created by a `mysql_hnc:query` (or similar) call may not exist
+  or have different values when you use `mysql_hnc:query` again, as it will likely
+  be executed using a different connection. This behavior cannot be changed, you have
+  to keep it in mind when writing your code.
+
+* Any session data you created by a `mysql_hnc:query` (or similar) call will still
+  exist when another process executes a query and is given this connection, ie the
+  session is "dirty". Another possible scenario is that one process changed
+  the connection to use another user, in which case it will be logged in as
+  that user when another process gets this connection. This can be circumvented
+  by using the on_return callback option of `hnc` (it will be called whenever a
+  worker returns to the pool). You may use this callback to either call
+  `mysql:reset_connection` or `mysql:change_user` in order to automatically reset
+  the connection to a clean state when the connection is returned to the pool.
+
+```Erlang
+1> OnReturn = fun (Conn) -> mysql:change_user(Conn, "user0", "password0") end.
+#Fun<erl_eval.44.97283095>
+2> mysql_hnc:add_pool(pool1, #{on_return => {OnReturn, 5000}}, [{user, "user0"}, {password, "password0"}]).
+{ok,<0.116.0>}
+```
+
 Use this as a dependency
 ------------------------
 
