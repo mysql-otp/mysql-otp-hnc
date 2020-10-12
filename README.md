@@ -3,7 +3,7 @@ MySQL/OTP + hnc
 
 **MySQL/OTP + hnc** provides connection pooling for
 [MySQL/OTP](//github.com/mysql-otp/mysql-otp) using
-[hnc](//github.com/juhlig/hnc). It contains convenience functions for
+[hnc](//github.com/hnc-agency/hnc). It contains convenience functions for
 executing SQL queries on a connection in a pool and lets you choose between two
 methods for creating and managing connection pools:
 
@@ -151,7 +151,7 @@ Using *erlang.mk*, put this in your `Makefile`:
 
 ```Erlang
 DEPS = mysql_hnc
-dep_mysql_hnc = git https://github.com/mysql-otp/mysql-otp-hnc 0.2.0
+dep_mysql_hnc = git https://github.com/mysql-otp/mysql-otp-hnc 0.3.0
 ```
 
 Using *rebar*, put this in your `rebar.config`:
@@ -159,7 +159,7 @@ Using *rebar*, put this in your `rebar.config`:
 ```Erlang
 {deps, [
     {mysql_hnc, ".*", {git, "https://github.com/mysql-otp/mysql-otp-hnc",
-                           {tag, "0.2.0"}}}
+                           {tag, "0.3.0"}}}
 ]}.
 ```
 
