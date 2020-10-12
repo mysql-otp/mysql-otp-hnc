@@ -50,8 +50,8 @@ add_pool(Pool, PoolOptions, MysqlOptions) ->
 -spec remove_pool(Pool) -> ok | {error, not_found}
         when Pool :: hnc:pool().
 remove_pool(Pool) ->
-    case supervisor:terminate_child(mysql_hnc_sup, {hnc_embedded_sup, Pool}) of
-        ok -> supervisor:delete_child(mysql_hnc_sup, {hnc_embedded_sup, Pool});
+    case supervisor:terminate_child(mysql_hnc_sup, {hnc_pool, Pool}) of
+        ok -> supervisor:delete_child(mysql_hnc_sup, {hnc_pool, Pool});
         Error -> Error
     end.
 
